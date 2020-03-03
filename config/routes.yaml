@@ -1,0 +1,16 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+
+# RUTAS PARA CONTROLADOR: USUARIO #
+
+user:
+    path: /user
+    controller: App\Controller\UserController::index
+
+
+# RUTAS PARA CONTROLADOR: EVENTO #
+
+event:
+    path: /event
+    controller: App\Controller\EventController::index
