@@ -7,7 +7,12 @@
 user:
     path: /user
     controller: App\Controller\UserController::index
+    methods: [POST]
 
+register:
+    path: /register
+    controller: App\Controller\UserController::create
+    methods: [POST]
 
 # RUTAS PARA CONTROLADOR: EVENTO #
 
