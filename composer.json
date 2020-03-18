@@ -19,7 +19,8 @@
         "symfony/property-access": "5.0.*",
         "symfony/serializer": "5.0.*",
         "symfony/validator": "5.0.*",
-        "symfony/yaml": "5.0.*"
+        "symfony/yaml": "5.0.*",
+        "doctrine/orm": "^2.5"
     },
     "require-dev": {
     },

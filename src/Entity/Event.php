@@ -35,12 +35,6 @@ class Event
      */
     private $createdAt = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="from_id", type="integer", nullable=false)
-     */
-    private $fromId;
 
     /**
      * @var string|null
@@ -102,17 +96,6 @@ class Event
         return $this;
     }
 
-    public function getFromId(): ?int
-    {
-        return $this->fromId;
-    }
-
-    public function setFromId(int $fromId): self
-    {
-        $this->fromId = $fromId;
-
-        return $this;
-    }
 
     public function getStatus(): ?string
     {

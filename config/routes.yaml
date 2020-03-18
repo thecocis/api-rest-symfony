@@ -14,8 +14,28 @@ register:
     controller: App\Controller\UserController::create
     methods: [POST]
 
+login:
+    path: /login
+    controller: App\Controller\UserController::login
+    methods: [POST]
+
+user_edit:
+    path: /user/edit
+    controller: App\Controller\UserController::edit
+    methods: [PUT]
+    
 # RUTAS PARA CONTROLADOR: EVENTO #
 
 event:
     path: /event
     controller: App\Controller\EventController::index
+
+event_new:
+    path: /event/new
+    controller: App\Controller\EventController::create
+    methods: [POST]
+
+event_list:
+    path: /event/list
+    controller: App\Controller\EventController::eventos
+    methods: [GET]
