@@ -25,10 +25,20 @@ id              int(255) auto_increment not null,
 user_id         int(255) not null,
 url             varchar(255) not null,
 created_at      datetime DEFAULT CURRENT_TIMESTAMP,
-from_id         int(255) not null,
-status          varchar(255),
+status          int(11),
 title           varchar(255) not null,
 description     text,
+price           int(11),
+date            date,
 CONSTRAINT pk_events PRIMARY KEY(id),
 CONSTRAINT fk_event_user FOREIGN KEY(user_id) REFERENCES users(id)
+)ENGINE=InnoDb;
+
+CREATE TABLE valorations(
+id              int(255) auto_increment not null,
+user_id         int(255) not null,
+from_id         int(255) not null,
+value           int(255) not null,
+CONSTRAINT pk_valorations PRIMARY KEY(id),
+CONSTRAINT fk_valoration_user FOREIGN KEY(user_id) REFERENCES users(id)
 )ENGINE=InnoDb;

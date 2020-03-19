@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints\Email;
 
 use App\Entity\User;
 use App\Entity\Event;
+use App\Entity\Valoration;
 use App\Services\JwtAuth;
 
 class UserController extends AbstractController
@@ -34,24 +35,30 @@ class UserController extends AbstractController
     {
         $user_repo = $this->getDoctrine()->getRepository(User::class);
         $event_repo = $this->getDoctrine()->getRepository(Event::class);
+        $valoration_repo = $this->getDoctrine()->getRepository(Valoration::class);
 
         $users = $user_repo->findAll();
-
         $user = $user_repo->find(1);
 
         $events = $event_repo->findAll();
+
+        $valorations = $valoration_repo->findAll();
 
         $data = [
             'message' => 'Welcome to your new controller!',
             'path' => 'src/Controller/UserController.php',
         ];
 
-        /*
+        
         foreach($users as $user){
             echo "<h1>{$user->getName()} {$user->getSurname()}</h1>";
+            
+            foreach($user->getValorations() as $valoration){
+                echo"<p>{$valoration->getValue()}</p>";
+            }
         }
         die();
-        */
+        
         return $this->resjson($data);
     }
     public function create(Request $request){

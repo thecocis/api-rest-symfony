@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Date;
 
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -74,6 +75,8 @@ class EventController extends AbstractController
                 $title = (!empty($params->title)) ? $params->title : null;
                 $description = (!empty($params->description)) ? $params->description : null;
                 $url = (!empty($params->url)) ? $params->url : null;
+                $price = (!empty($params->price)) ? $params->price : null;
+                $date = (!empty($params->date)) ? $params->date : null;
 
                 if(!empty($user_id) && !empty($title)){
                     // Guardar el nuevo evento en la BBDD
@@ -88,10 +91,15 @@ class EventController extends AbstractController
                     $event->setTitle($title);
                     $event->setDescription($description);
                     $event->setUrl($url);
-                    $event->setStatus('normal');
+                    $event->setStatus(0);
+                    $event->setPrice($price);
+                   
 
                     $createdAt = new \Datetime('now');
                     $event->setCreatedAt($createdAt);
+                    
+                    $realDate = new \Datetime($date);
+                    $event->setDate($realDate);
 
                     // Guardar en la BBDD
                     $em->persist($event);

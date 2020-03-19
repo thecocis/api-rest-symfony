@@ -127,8 +127,14 @@ class User implements \jsonSerializable
      */
     private $events;
 
+    /**
+     * @ORM\OneToMany (targetEntity="App\Entity\Valoration", mappedBy="user")
+     */
+    private $valorations;
+
     public function __construct() {
         $this->events = new ArrayCollection();
+        $this->valorations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -311,6 +317,13 @@ class User implements \jsonSerializable
         return $this->events;
     }
 
+    /**
+     * @return Collection|Valoration[]
+     */
+    public function getValorations(): Collection{
+        return $this->valorations;
+    }
+
     public function jsonSerialize(): array{
 
         return [
@@ -321,6 +334,29 @@ class User implements \jsonSerializable
             'prefix' => $this->prefix,
             'telephone' => $this->telephone,
         ];
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->events->contains($event)) {
+            $this->events->removeElement($event);
+            // set the owning side to null (unless already changed)
+            if ($event->getUser() === $this) {
+                $event->setUser(null);
+            }
+        }
+
+        return $this;
     }
 
 }

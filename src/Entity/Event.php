@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\Date;
 
 /**
  * Event
@@ -37,9 +38,9 @@ class Event
 
 
     /**
-     * @var string|null
+     * @var int|null
      *
-     * @ORM\Column(name="status", type="string", length=255, nullable=true)
+     * @ORM\Column(name="status", type="integer", length=11, nullable=true)
      */
     private $status;
 
@@ -56,6 +57,20 @@ class Event
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
     private $description;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="price", type="integer", length=11, nullable=true)
+     */
+    private $price;
+
+    /**
+     * @var \Date|null
+     *
+     * @ORM\Column(name="date", type="date", nullable=true)
+     */
+    private $date;
 
     /**
      * @var \User
@@ -97,12 +112,12 @@ class Event
     }
 
 
-    public function getStatus(): ?string
+    public function getStatus(): ?int
     {
         return $this->status;
     }
 
-    public function setStatus(?string $status): self
+    public function setStatus(?int $status): self
     {
         $this->status = $status;
 
@@ -129,6 +144,30 @@ class Event
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?int $price): self
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(?\DateTimeInterface $date): self
+    {
+        $this->date = $date;
 
         return $this;
     }
