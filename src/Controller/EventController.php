@@ -39,7 +39,7 @@ class EventController extends AbstractController
         ]);
     }
 
-    public function create(Request $request, JwtAuth $jwt_auth){
+    public function create(Request $request, JwtAuth $jwt_auth, $id = null){
         $data = [
             'status' => 'error',
             'code' => 400,
@@ -85,32 +85,61 @@ class EventController extends AbstractController
                         'id' => $user_id
                     ]);
 
-                    // Crear y guardar objeto
-                    $event = new Event();
-                    $event->setUser($user);
-                    $event->setTitle($title);
-                    $event->setDescription($description);
-                    $event->setUrl($url);
-                    $event->setStatus(0);
-                    $event->setPrice($price);
-                   
-
-                    $createdAt = new \Datetime('now');
-                    $event->setCreatedAt($createdAt);
+                    if ($id == null){     // NUEVO EVENTO
+                        // Crear y guardar objeto
+                        $event = new Event();
+                        $event->setUser($user);
+                        $event->setTitle($title);
+                        $event->setDescription($description);
+                        $event->setUrl($url);
+                        $event->setStatus(0);
+                        $event->setPrice($price);
                     
-                    $realDate = new \Datetime($date);
-                    $event->setDate($realDate);
 
-                    // Guardar en la BBDD
-                    $em->persist($event);
-                    $em->flush();
+                        $createdAt = new \Datetime('now');
+                        $event->setCreatedAt($createdAt);
+                        
+                        $realDate = new \Datetime($date);
+                        $event->setDate($realDate);
 
-                    $data = [
-                        'status' => 'success',
-                        'code' => 200,
-                        'message' => 'El event se ha creado correctamente',
-                        'event' => $event
-                    ];
+                        // Guardar en la BBDD
+                        $em->persist($event);
+                        $em->flush();
+
+                        $data = [
+                            'status' => 'success',
+                            'code' => 200,
+                            'message' => 'El evento se ha creado correctamente',
+                            'event' => $event
+                        ];
+                    }else{            //EVENTO EXISTENTE, por lo tanto  lo modificamos
+
+                        $event = $this->getDoctrine()->getRepository(Event::class)->findOneBy([
+                            'id' => $id,
+                            'user' => $identity->sub
+                        ]);
+
+                        if ($event && is_object($event)){
+                            $event->setTitle($title);
+                            $event->setDescription($description);
+                            $event->setUrl($url);
+                            $event->setStatus(0);
+                            $event->setPrice($price);
+                            
+                            $realDate = new \Datetime($date);
+                            $event->setDate($realDate);
+
+                            $em->persist($event);
+                            $em->flush();
+
+                            $data = [
+                                'status' => 'success',
+                                'code' => 200,
+                                'message' => 'El evento se ha actualizado correctamente',
+                                'event' => $event
+                            ];
+                        }
+                    }
                 }
             }
         }
@@ -152,7 +181,7 @@ class EventController extends AbstractController
                 'page_actual' => $page,
                 'itemps_per_page' => $items_per_page,
                 'total_page' => ceil($total / $items_per_page),
-                'videos' => $pagination,
+                'eventos' => $pagination,
                 'user' => $identity->sub
             );
         }else{
@@ -162,13 +191,74 @@ class EventController extends AbstractController
                 'code' => 404,
                 'message' => 'No se pueden listar los eventos en este momento'
             );
-
         }
+        return $this->resjson($data);
+    }
 
+    public function event(Request $request, JwtAuth $jwt_auth, $id = null){
+        // Salida por defecto
+        $data = [
+            'status' => 'error',
+            'code' => 404,
+            'message' => 'Evento no encontrado',
+        ];
 
+        // Sacar el token y comprobar si es correcto
+        $token = $request->headers->get('Authorization');
+        $authCheck = $jwt_auth->checkToken($token);
 
+        if ($authCheck){
 
+            // Sacar la identidad del usuario
+            $identity = $jwt_auth->checkToken($token, true);
 
+            // Sacar el objeto del evento en base al id
+            $event = $this->getDoctrine()->getRepository(Event::class)->findOneBy([
+                'id' => $id
+            ]);
+
+            // Comprobar si el evento existe y es propiedad del usuario identificado
+            if ($event && is_object($event)){        
+                $data = [
+                    'status' => 'success',
+                    'code' => 200,
+                    'event' => $event
+                ];
+            }
+        }
+        return $this->resjson($data);
+    }
+
+    public function remove(Request $request, JwtAuth $jwt_auth, $id = null){
+        // Salida por defecto
+        $data = [
+            'status' => 'error',
+            'code' => 404,
+            'message' => 'Evento no encontrado',
+        ];
+
+        $token = $request->headers->get('Authorization');
+        $authCheck = $jwt_auth->checkToken($token);
+
+        if ($authCheck){
+            $identity = $jwt_auth->checkToken($token, true);
+            $doctrine = $this->getDoctrine();
+            $em = $doctrine->getManager();
+            $event = $doctrine->getRepository(Event::class)->findOneBy([
+                'id'=>$id
+            ]);
+
+            if ($event && is_object($event) && $identity->sub == $event->getUser()->getId()){
+                $em->remove($event);
+                $em->flush();
+
+                $data = [
+                    'status' => 'success',
+                    'code' => 200,
+                    'event' => $event
+                ];
+            }
+        }
 
         return $this->resjson($data);
     }

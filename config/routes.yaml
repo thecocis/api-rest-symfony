@@ -35,7 +35,22 @@ event_new:
     controller: App\Controller\EventController::create
     methods: [POST]
 
+event_edit:
+    path: /event/edit/{id}
+    controller: App\Controller\EventController::create
+    methods: [PUT]
+
 event_list:
     path: /event/list
     controller: App\Controller\EventController::eventos
     methods: [GET]
+
+event_detail:
+    path: /event/detail/{id}
+    controller: App\Controller\EventController::event
+    methods: [GET]
+
+event_remove:
+    path: /event/remove/{id}
+    controller: App\Controller\EventController::remove
+    methods: [DELETE]
