@@ -299,4 +299,53 @@ class UserController extends AbstractController
         return $this->resjson($data);
     }
 
+    public function myProfile(Request $request, JwtAuth $jwt_auth, $id = null){
+        // Salida por defecto
+        $data = [
+            'status' => 'error',
+            'code' => 404,
+            'message' => 'Perfil no encontrado',
+
+        ];
+
+        // Sacar el token y comprobar si es correcto
+        $token = $request->headers->get('Authorization');
+        $authCheck = $jwt_auth->checkToken($token);
+
+        if ($authCheck){
+            // Conseguir entity manager
+            $em = $this->getDoctrine()->getManager();
+
+            // Conseguir los datos del usuario identificado
+            $identity = $jwt_auth->checkToken($token, true);
+
+            // Conseguir el usuario buscando por su id
+            $user_repo = $this->getDoctrine()->getRepository(User::class);
+            $user = $user_repo->findOneBy([
+                'id' => $id     //propiedad donde se guarda el id
+            ]);
+
+
+            $data = [
+                'status' => 'success',
+                'code' => 200,
+                'event' => $user
+            ];
+
+        }else { //Test para probar porque no funciona
+            $data = [
+                'status' => 'error',
+                'code' => 404,
+                'message' => 'Perfil no encontrado',
+                'authcheck' => $authCheck
+    
+            ];
+
+        }
+
+
+
+
+        return $this->resjson($data);
+    }
 }
