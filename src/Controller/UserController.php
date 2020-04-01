@@ -321,10 +321,15 @@ class UserController extends AbstractController
 
             // Conseguir el usuario buscando por su id
             $user_repo = $this->getDoctrine()->getRepository(User::class);
-            $user = $user_repo->findOneBy([
-                'id' => $id     //propiedad donde se guarda el id
-            ]);
-
+            if ($id == null){
+                $user = $user_repo->findOneBy([
+                    'id' => $identity->sub      //propiedad donde se guarda el id
+                ]);
+            }else{
+                $user = $user_repo->findOneBy([
+                    'id' => $id     
+                ]);
+            }
 
             $data = [
                 'status' => 'success',
