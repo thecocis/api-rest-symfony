@@ -28,6 +28,11 @@ user_edit:
     path: /user/edit
     controller: App\Controller\UserController::edit
     methods: [PUT]
+
+user_upload_image:
+    path: /user/upload-image
+    controller: App\Controller\UserController::uploadImage
+    methods: [POST]
     
 # RUTAS PARA CONTROLADOR: EVENTO #
 

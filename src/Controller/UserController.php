@@ -84,7 +84,7 @@ class UserController extends AbstractController
             $password = (!empty($params->password)) ? $params->password : null;
             $entity = (!empty($params->entity)) ? $params->entity : null;
             $charge = (!empty($params->charge)) ? $params->charge : null;
-            $avatar = (!empty($params->avatar)) ? $params->avatar : null;
+            $image = (!empty($params->image)) ? $params->image : null;
             $biography = (!empty($params->biography)) ? $params->biography : null;
             $valoration = (!empty($params->valoration)) ? $params->valoration : null;
             $prefix = (!empty($params->prefix)) ? $params->prefix : null;
@@ -105,7 +105,7 @@ class UserController extends AbstractController
                 $user->setEmail($email);
                 $user->setEntity($entity);
                 $user->setCharge($charge);
-                $user->setAvatar($avatar);
+                $user->setImage($image);
                 $user->setBiography($biography);
                 $user->setCreatedAt(new \Datetime('now'));
                 $user->setValoration($valoration);
@@ -242,7 +242,7 @@ class UserController extends AbstractController
                 $email = (!empty($params->email)) ? $params->email : null;
                 $entity = (!empty($params->entity)) ? $params->entity : null;
                 $charge = (!empty($params->charge)) ? $params->charge : null;
-                $avatar = (!empty($params->avatar)) ? $params->avatar : null;
+                $image = (!empty($params->image)) ? $params->image : null;
                 $biography = (!empty($params->biography)) ? $params->biography : null;
                 $valoration = (!empty($params->valoration)) ? $params->valoration : null;
                 $prefix = (!empty($params->prefix)) ? $params->prefix : null;
@@ -262,7 +262,7 @@ class UserController extends AbstractController
                     $user->setEmail($email);
                     $user->setEntity($entity);
                     $user->setCharge($charge);
-                    $user->setAvatar($avatar);
+                    $user->setImage($image);
                     $user->setBiography($biography);
                     $user->setPrefix($prefix);
                     $user->setTelephone($telephone);
@@ -343,14 +343,68 @@ class UserController extends AbstractController
                 'code' => 404,
                 'message' => 'Perfil no encontrado',
                 'authcheck' => $authCheck
-    
             ];
+        }
+        return $this->resjson($data);
+    }
+
+    public function uploadImage(Request $request, JwtAuth $jwt_auth){
+        $token = $request->get('Authorization');
+        $authCheck = $jwt_auth->checkToken($token);
+        
+        // Respuesta por defecto
+        $data = [
+            'status' => 'error',
+            'code' => 400,
+            'message' => "auth invalida",
+            'auth' => $authCheck
+        ];
+
+        if($authCheck) {
+            $em = $this->getDoctrine()->getManager();
+            $identity = $jwt_auth->checkToken($token, true);
+
+            $user_repo = $this->getDoctrine()->getRepository(User::class);
+            $user = $user_repo->findOneBy([
+                'id' => $identity->sub      //propiedad donde se guarda el id
+            ]);
+
+            $file = $request->files->get("image");
+
+            if(!empty($file) && $file !=null){
+                $ext = $file->guessExtension();
+
+                if($ext == "jpeg"  || $ext == "jpg" || $ext == "png" || $ext == "gif"){
+                    $file_name = time().".".$ext;
+                    $file->move("uploads/users", $file_name);
+
+                    $user->setImage($file_name);
+                    $em->persist($user);
+                    $em->flush();
+
+                    $data = [
+                        'status' => 'success',
+                        'code' => 200,
+                        'message' => 'Imagen subida correctamente'
+                    ];
+                }else{
+                    $data = [
+                        'status' => 'error',
+                        'code' => 400,
+                        'message' => 'formato invalido'
+                    ];
+                }
+            }else{
+                $data = [
+                    'status' => 'error',
+                    'code' => 400,
+                    'message' => 'La imagen no se ha subido'
+                ];
+
+            }
+
 
         }
-
-
-
-
         return $this->resjson($data);
     }
 }

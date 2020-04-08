@@ -68,9 +68,9 @@ class User implements \jsonSerializable
     /**
      * @var string|null
      *
-     * @ORM\Column(name="avatar", type="string", length=255, nullable=true)
+     * @ORM\Column(name="image", type="string", length=255, nullable=true)
      */
-    private $avatar;
+    private $image;
 
     /**
      * @var string|null
@@ -214,14 +214,14 @@ class User implements \jsonSerializable
         return $this;
     }
 
-    public function getAvatar(): ?string
+    public function getImage(): ?string
     {
-        return $this->avatar;
+        return $this->image;
     }
 
-    public function setAvatar(?string $avatar): self
+    public function setImage(?string $image): self
     {
-        $this->avatar = $avatar;
+        $this->image = $image;
 
         return $this;
     }
