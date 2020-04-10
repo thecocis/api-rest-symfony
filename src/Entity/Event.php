@@ -66,6 +66,20 @@ class Event
     private $price;
 
     /**
+     * @var float|null
+     *
+     * @ORM\Column(name="latitude", type="float", length=11, nullable=true)
+     */
+    private $latitude;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="longitude", type="float", length=11, nullable=true)
+     */
+    private $longitude;
+
+    /**
      * @var \Date|null
      *
      * @ORM\Column(name="date", type="date", nullable=true)
@@ -156,6 +170,30 @@ class Event
     public function setPrice(?int $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): self
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): self
+    {
+        $this->longitude = $longitude;
 
         return $this;
     }

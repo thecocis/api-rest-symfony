@@ -77,6 +77,8 @@ class EventController extends AbstractController
                 $url = (!empty($params->url)) ? $params->url : null;
                 $price = (!empty($params->price)) ? $params->price : null;
                 $date = (!empty($params->date)) ? $params->date : null;
+                $latitude = (!empty($params->latitude)) ? $params->latitude : null;
+                $longitude = (!empty($params->longitude)) ? $params->longitude : null;
 
                 if(!empty($user_id) && !empty($title)){
                     // Guardar el nuevo evento en la BBDD
@@ -94,6 +96,8 @@ class EventController extends AbstractController
                         $event->setUrl($url);
                         $event->setStatus(0);
                         $event->setPrice($price);
+                        $event->setLatitude($latitude);
+                        $event->setLongitude($longitude);
                     
 
                         $createdAt = new \Datetime('now');
@@ -125,6 +129,8 @@ class EventController extends AbstractController
                             $event->setUrl($url);
                             $event->setStatus(0);
                             $event->setPrice($price);
+                            $event->setLatitude($latitude);
+                            $event->setLongitude($longitude);
                             
                             $realDate = new \Datetime($date);
                             $event->setDate($realDate);
@@ -189,7 +195,8 @@ class EventController extends AbstractController
             $data = array(
                 'status' => 'error',
                 'code' => 404,
-                'message' => 'No se pueden listar los eventos en este momento'
+                'message' => 'No se pueden listar los eventos en este momento',
+                'authcheck' => $authCheck
             );
         }
         return $this->resjson($data);
