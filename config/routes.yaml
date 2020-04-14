@@ -33,6 +33,12 @@ user_upload_image:
     path: /user/upload-image
     controller: App\Controller\UserController::uploadImage
     methods: [POST]
+
+user_total:
+    path: /user/total
+    controller: App\Controller\UserController::allUsers
+    methods: [GET]
+
     
 # RUTAS PARA CONTROLADOR: EVENTO #
 
@@ -53,6 +59,11 @@ event_edit:
 event_list:
     path: /event/list
     controller: App\Controller\EventController::eventos
+    methods: [GET]
+
+event_total:
+    path: /event/total
+    controller: App\Controller\EventController::allEventos
     methods: [GET]
 
 event_detail:

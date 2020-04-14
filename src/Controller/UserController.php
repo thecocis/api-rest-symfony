@@ -407,4 +407,50 @@ class UserController extends AbstractController
         }
         return $this->resjson($data);
     }
+
+    public function allUsers(Request $request, JwtAuth $jwt_auth){
+
+        // Sacar el token y comprobar si es correcto
+        $token = $request->headers->get('Authorization');
+        $authCheck = $jwt_auth->checkToken($token);
+
+        // Salida por defecto
+        $data = [
+            'status' => 'error',
+            'code' => 404,
+            'message' => 'Perfil no encontrado',
+            'authcheck' => $authCheck
+
+        ];
+
+        if ($authCheck){
+            // Conseguir entity manager
+            $em = $this->getDoctrine()->getManager();
+
+            // Conseguir los datos del usuario identificado
+            $identity = $jwt_auth->checkToken($token, true);
+
+            // Conseguir todos los usuarios
+            $dql = $em->createQuery("SELECT u FROM App\Entity\User u ");
+            $users = $dql->getResult();
+
+            $data = [
+                'status' => 'success',
+                'code' => 200,
+                'event' => $users
+            ];
+
+        }else { //Test para probar porque no funciona
+            $data = [
+                'status' => 'error',
+                'code' => 404,
+                'message' => 'Perfil no encontrado',
+                'authcheck' => $authCheck
+            ];
+        }
+        return $this->resjson($data);
+    }
+
+
+
 }

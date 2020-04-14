@@ -202,6 +202,54 @@ class EventController extends AbstractController
         return $this->resjson($data);
     }
 
+    public function allEventos(Request $request, JwtAuth $jwt_auth, PaginatorInterface $paginator){
+        // Recoger la cabecera de autenticación
+        $token = $request->headers->get('Authorization');
+
+        // Comprobar el token
+        $authCheck = $jwt_auth->checkToken($token);
+
+        if($authCheck){
+            // Conseguir la identidad del usuario
+            $identity = $jwt_auth->checkToken($token, true);
+
+            $em = $this->getDoctrine()->getManager();
+
+            // Hacer una consulta para paginar
+            $dql = "SELECT e FROM App\Entity\Event e ORDER BY e.id DESC";
+            $query = $em->createQuery($dql);
+
+            // Recoger el parametro page de la url
+            $page = $request->query->getInt('page', 1);
+            $items_per_page = 5;
+            
+            // Invocar paginación
+            $pagination = $paginator->paginate($query, $page, $items_per_page);
+            $total = $pagination->getTotalItemCount();
+
+            // Preparar array de datos para devolver
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+                'total_items_count' => $total,
+                'page_actual' => $page,
+                'itemps_per_page' => $items_per_page,
+                'total_page' => ceil($total / $items_per_page),
+                'eventos' => $pagination,
+                'user que lo solicita' => $identity->sub
+            );
+        }else{
+            // Si falla devolver esto:
+            $data = array(
+                'status' => 'error',
+                'code' => 404,
+                'message' => 'No se pueden listar los eventos en este momento',
+                'authcheck' => $authCheck
+            );
+        }
+        return $this->resjson($data);
+    }
+
     public function event(Request $request, JwtAuth $jwt_auth, $id = null){
         // Salida por defecto
         $data = [
