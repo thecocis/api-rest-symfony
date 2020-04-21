@@ -331,6 +331,12 @@ class User implements \jsonSerializable
             'name' => $this->name,
             'surname' => $this->surname,
             'email' => $this->email,
+            'entity' => $this->entity,
+            'charge' => $this->charge,
+            'biography' => $this->biography,
+            'valoration' => $this->valoration,
+            'num_valoration' => $this->numValoration,
+            'image' => $this->image,
             'prefix' => $this->prefix,
             'telephone' => $this->telephone,
         ];

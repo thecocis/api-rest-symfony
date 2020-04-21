@@ -7,7 +7,7 @@
 user:
     path: /user
     controller: App\Controller\UserController::index
-    methods: [POST]
+    methods: [GET]
 
 user_profile:
     path: /user/profile/{id}

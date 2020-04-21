@@ -33,9 +33,14 @@ class EventController extends AbstractController
 
     public function index()
     {
+        $event_repo = $this->getDoctrine()->getRepository(Event::class);
+        $events = $event_repo->findAll();
+
         return $this->json([
-            'message' => 'Welcome to your new controller!',
+            'message' => 'Welcome to your new controller! PD. Deberias cambiar este mensaje, vago',
             'path' => 'src/Controller/EventController.php',
+            'events' => $events
+            
         ]);
     }
 

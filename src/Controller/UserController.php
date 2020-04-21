@@ -47,9 +47,11 @@ class UserController extends AbstractController
         $data = [
             'message' => 'Welcome to your new controller!',
             'path' => 'src/Controller/UserController.php',
+            'user' => $users,
+            'event' => $events
         ];
 
-        
+        /*
         foreach($users as $user){
             echo "<h1>{$user->getName()} {$user->getSurname()}</h1>";
             
@@ -57,7 +59,7 @@ class UserController extends AbstractController
                 echo"<p>{$valoration->getValue()}</p>";
             }
         }
-        die();
+        */
         
         return $this->resjson($data);
     }
@@ -105,7 +107,7 @@ class UserController extends AbstractController
                 $user->setEmail($email);
                 $user->setEntity($entity);
                 $user->setCharge($charge);
-                $user->setImage($image);
+                $user->setImage("default.jpg");
                 $user->setBiography($biography);
                 $user->setCreatedAt(new \Datetime('now'));
                 $user->setValoration($valoration);
@@ -299,7 +301,9 @@ class UserController extends AbstractController
         return $this->resjson($data);
     }
 
-    public function myProfile(Request $request, JwtAuth $jwt_auth, $id = null){
+    //Primera version de la función
+    //Actualmente no está en uso
+    public function myProfile_oldVersion(Request $request, JwtAuth $jwt_auth, $id = null){
         // Salida por defecto
         $data = [
             'status' => 'error',
@@ -334,7 +338,7 @@ class UserController extends AbstractController
             $data = [
                 'status' => 'success',
                 'code' => 200,
-                'event' => $user
+                'user' => $user
             ];
 
         }else { //Test para probar porque no funciona
@@ -450,6 +454,41 @@ class UserController extends AbstractController
         }
         return $this->resjson($data);
     }
+
+    public function myProfile(Request $request, JwtAuth $jwt_auth, $id = null){
+        $token = $request->headers->get('Authorization');
+        $authCheck = $jwt_auth->checkToken($token);
+
+        if ($authCheck){
+            // Conseguir entity manager
+            $em = $this->getDoctrine()->getManager();
+            // Conseguir los datos del usuario identificado
+            $identity = $jwt_auth->checkToken($token, true);
+
+            // Conseguir el usuario buscando por su id
+            $user_repo = $this->getDoctrine()->getRepository(User::class);
+            $user = $user_repo->findOneBy([
+                'id' => $id    
+            ]);
+
+            $data = [
+                'status' => 'success',
+                'code' => 200,
+                'user' => $user
+            ];
+
+        }else { //Test para probar porque no funciona
+            $data = [
+                'status' => 'error',
+                'code' => 404,
+                'message' => 'Perfil no encontrado',
+                'authcheck' => $authCheck
+            ];
+        }
+        return $this->resjson($data);
+    }
+
+
 
 
 
