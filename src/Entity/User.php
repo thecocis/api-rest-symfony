@@ -132,9 +132,22 @@ class User implements \jsonSerializable
      */
     private $valorations;
 
+    /**
+     * @ORM\OneToMany (targetEntity="App\Entity\Comment", mappedBy="user")
+     */
+    private $comments_to;
+
+    /**
+     * @ORM\OneToMany (targetEntity="App\Entity\Comment", mappedBy="from")
+     */
+    private $comments_from;
+
+
     public function __construct() {
         $this->events = new ArrayCollection();
         $this->valorations = new ArrayCollection();
+        $this->comments_from = new ArrayCollection();
+        $this->comments_to = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -324,6 +337,20 @@ class User implements \jsonSerializable
         return $this->valorations;
     }
 
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getCommentsFrom(): Collection{
+        return $this->comments_from;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getCommentsTo(): Collection{
+        return $this->comments_to;
+    }
+
     public function jsonSerialize(): array{
 
         return [
@@ -359,6 +386,29 @@ class User implements \jsonSerializable
             // set the owning side to null (unless already changed)
             if ($event->getUser() === $this) {
                 $event->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addValoration(Valoration $valoration): self
+    {
+        if (!$this->valorations->contains($valoration)) {
+            $this->valorations[] = $valoration;
+            $valoration->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeValoration(Valoration $valoration): self
+    {
+        if ($this->valorations->contains($valoration)) {
+            $this->valorations->removeElement($valoration);
+            // set the owning side to null (unless already changed)
+            if ($valoration->getUser() === $this) {
+                $valoration->setUser(null);
             }
         }
 

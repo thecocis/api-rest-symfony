@@ -458,8 +458,15 @@ class UserController extends AbstractController
     public function myProfile(Request $request, JwtAuth $jwt_auth, $id = null){
         $token = $request->headers->get('Authorization');
         $authCheck = $jwt_auth->checkToken($token);
-
-        if ($authCheck){
+        
+        if ($id == null) {
+            $data = [
+                'status' => 'success',
+                'code' => 200,
+                'id' => $id,
+                'user' => 'Usuario no encontrado por que el id es nulo'
+            ];
+        } elseif ($authCheck){
             // Conseguir entity manager
             $em = $this->getDoctrine()->getManager();
             // Conseguir los datos del usuario identificado

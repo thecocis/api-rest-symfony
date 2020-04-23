@@ -1,6 +1,17 @@
 CREATE DATABASE IF NOT EXISTS api_rest_symfony;
 USE api_rest_symfony;
 
+CREATE TABLE comments(
+id              int(255) auto_increment not null,
+user_id         int(255) not null,
+from_id         int(255) not null,
+body            int(255) not null,
+created_at      datetime DEFAULT CURRENT_TIMESTAMP,
+CONSTRAINT pk_comment PRIMARY KEY(id),
+CONSTRAINT fk_comment_user FOREIGN KEY(user_id) REFERENCES users(id),
+CONSTRAINT fk_comment_from FOREIGN KEY(from_id) REFERENCES users(id)
+)ENGINE=InnoDb;
+
 CREATE  TABLE users(
 id              int(255) auto_increment not null,
 name            varchar(50) not null,

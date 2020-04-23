@@ -159,6 +159,7 @@ class EventController extends AbstractController
         return $this->resjson($data);
     }
 
+    //Retorna los eventos del usuario
     public function eventos(Request $request, JwtAuth $jwt_auth, PaginatorInterface $paginator){
         // Recoger la cabecera de autenticación
         $token = $request->headers->get('Authorization');
@@ -207,6 +208,7 @@ class EventController extends AbstractController
         return $this->resjson($data);
     }
 
+    //Retorna TODOS los eventos
     public function allEventos(Request $request, JwtAuth $jwt_auth, PaginatorInterface $paginator){
         // Recoger la cabecera de autenticación
         $token = $request->headers->get('Authorization');
@@ -255,6 +257,7 @@ class EventController extends AbstractController
         return $this->resjson($data);
     }
 
+    //Retorna 1 evento
     public function event(Request $request, JwtAuth $jwt_auth, $id = null){
         // Salida por defecto
         $data = [
@@ -289,16 +292,18 @@ class EventController extends AbstractController
         return $this->resjson($data);
     }
 
+    //Elimina 1 evento
     public function remove(Request $request, JwtAuth $jwt_auth, $id = null){
+        $token = $request->headers->get('Authorization');
+        $authCheck = $jwt_auth->checkToken($token);
+
         // Salida por defecto
         $data = [
             'status' => 'error',
             'code' => 404,
-            'message' => 'Evento no encontrado',
+            'message' => 'Evento no encontrado o sesion inválida',
+            'authcheck' => $authCheck
         ];
-
-        $token = $request->headers->get('Authorization');
-        $authCheck = $jwt_auth->checkToken($token);
 
         if ($authCheck){
             $identity = $jwt_auth->checkToken($token, true);

@@ -2,7 +2,7 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
-# RUTAS PARA CONTROLADOR: USUARIO #
+# RUTAS PARA CONTROLADOR: USER #
 
 user:
     path: /user
@@ -40,7 +40,7 @@ user_total:
     methods: [GET]
 
     
-# RUTAS PARA CONTROLADOR: EVENTO #
+# RUTAS PARA CONTROLADOR: EVENT #
 
 event:
     path: /event
@@ -75,3 +75,29 @@ event_remove:
     path: /event/remove/{id}
     controller: App\Controller\EventController::remove
     methods: [DELETE]
+
+    # RUTAS PARA CONTROLADOR: COMMENT #
+
+comment:
+    path: /comment
+    controller: App\Controller\CommentController::index
+
+comment_new:
+    path: /comment/new
+    controller: App\Controller\CommentController::create
+    methods: [POST]
+
+comment_edit:
+    path: /comment/edit/{id}
+    controller: App\Controller\CommentController::create
+    methods: [PUT]
+
+comment_remove:
+    path: /comment/remove/{id}
+    controller: App\Controller\CommentController::remove
+    methods: [DELETE]
+
+comment_list:
+    path: /comment/list/{id}
+    controller: App\Controller\CommentController::listComments
+    methods: [GET]
