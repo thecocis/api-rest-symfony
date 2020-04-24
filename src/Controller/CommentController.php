@@ -182,7 +182,8 @@ class CommentController extends AbstractController
                 'itemps_per_page' => $items_per_page,
                 'total_page' => ceil($total / $items_per_page),
                 'comments' => $pagination,
-                'user' => $identity->sub
+                'user_from' => $identity->sub,
+                'user_to' => $id
             );
         }else{
             // Si falla devolver esto:
