@@ -130,7 +130,12 @@ class User implements \jsonSerializable
     /**
      * @ORM\OneToMany (targetEntity="App\Entity\Valoration", mappedBy="user")
      */
-    private $valorations;
+    private $valorations_to;
+
+    /**
+     * @ORM\OneToMany (targetEntity="App\Entity\Valoration", mappedBy="from")
+     */
+    private $valorations_from;
 
     /**
      * @ORM\OneToMany (targetEntity="App\Entity\Comment", mappedBy="user")
@@ -333,8 +338,15 @@ class User implements \jsonSerializable
     /**
      * @return Collection|Valoration[]
      */
-    public function getValorations(): Collection{
-        return $this->valorations;
+    public function getValorationsFrom(): Collection{
+        return $this->valorations_from;
+    }
+
+    /**
+     * @return Collection|Valoration[]
+     */
+    public function getValorationsTo(): Collection{
+        return $this->valorations_to;
     }
 
     /**

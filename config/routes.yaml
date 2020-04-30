@@ -101,3 +101,24 @@ comment_list:
     path: /comment/list/{id}
     controller: App\Controller\CommentController::listComments
     methods: [GET]
+
+    # RUTAS PARA CONTROLADOR: VALORATION #
+
+valoration:
+    path: /valoration
+    controller: App\Controller\ValorationController::index
+
+valoration_new:
+    path: /valoration/new
+    controller: App\Controller\ValorationController::valorate
+    methods: [POST]
+
+valoration_edit:
+    path: /valoration/edit/{id}
+    controller: App\Controller\ValorationController::valorate
+    methods: [PUT]
+
+valoration_list:
+    path: /valoration/list/{id}
+    controller: App\Controller\ValorationController::listValorations
+    methods: [GET]

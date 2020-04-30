@@ -13,10 +13,10 @@ use Symfony\Component\Validator\Constraints\Date;
 use Knp\Component\Pager\PaginatorInterface;
 
 use App\Entity\User;
-use App\Entity\Comment;
+use App\Entity\Valoration;
 use App\Services\JwtAuth;
 
-class CommentController extends AbstractController
+class ValorationController extends AbstractController
 {   
     private function resjson($data){
         // Serializar datos con servicio de serializer
@@ -33,18 +33,18 @@ class CommentController extends AbstractController
 
     public function index()
     {
-        $comment_repo = $this->getDoctrine()->getRepository(Comment::class);
-        $comments = $comment_repo->findAll();
+        $valoration_repo = $this->getDoctrine()->getRepository(Valoration::class);
+        $valorations = $valoration_repo->findAll();
 
         return $this->json([
             'message' => 'Welcome to your new controller! PD. Deberias cambiar este mensaje, vago',
-            'path' => 'src/Controller/CommentController.php',
-            'comments' => $comments
+            'path' => 'src/Controller/ValorationController.php',
+            'valorations' => $valorations
             
         ]);
     }
 
-    public function create(Request $request, JwtAuth $jwt_auth, $id = null){
+    public function valorate(Request $request, JwtAuth $jwt_auth, $id = null){
         $data = [
             'status' => 'error',
             'code' => 400,
@@ -75,12 +75,12 @@ class CommentController extends AbstractController
             if(!empty($json)){
 
                 $from_id = ($identity->sub != null) ? $identity->sub : null;
-                $user_id = (!empty($params->user_id)) ? $params->user_id : null;
-                $body = (!empty($params->body)) ? $params->body : null;
+                $user_id = (!empty($params->user->id)) ? $params->user->id : null;
+                $value = (!empty($params->value)) ? $params->value : null;
 
 
-                if(!empty($from_id) && !empty($body) && !empty($user_id)){
-                    // Guardar el nuevo comment en la BBDD
+                if(!empty($from_id) && !empty($value) && !empty($user_id)){
+                    // Guardar el nuevo valoration en la BBDD
                     $em = $this->getDoctrine()->getManager();
                     $from = $this->getDoctrine()->getRepository(User::class)->findOneBy([
                         'id' => $from_id 
@@ -89,44 +89,52 @@ class CommentController extends AbstractController
                         'id' => $user_id
                     ]);
 
-                    if ($id == null){     // NUEVO COMMENT
+                    if ($id == null){     // NUEVA VAL
                         // Crear y guardar objeto
-                        $comment = new Comment();
-                        $comment->setUser($user);
-                        $comment->setFrom($from);
-                        $comment->setBody($body);
+                        $valoration = new Valoration();
+                        $valoration->setUser($user);
+                        $valoration->setFrom($from);
+                        $valoration->setValue($value);
 
                         $createdAt = new \Datetime('now');
-                        $comment->setCreatedAt($createdAt);                
+                        $valoration->setCreatedAt($createdAt);                
 
                         // Guardar en la BBDD
-                        $em->persist($comment);
+                        $em->persist($valoration);
                         $em->flush();
 
                         $data = [
                             'status' => 'success',
                             'code' => 200,
-                            'message' => 'El comment se ha creado correctamente',
-                            'comment' => $comment
+                            'message' => 'La valoración se ha creado correctamente',
+                            'valoration' => $valoration
                         ];
-                    }else{            //COMMENT EXISTENTE, por lo tanto  lo modificamos
+                    }else{            //VALORATION EXISTENTE, por lo tanto  lo modificamos
 
-                        $comment = $this->getDoctrine()->getRepository(Comment::class)->findOneBy([
+                        $valoration = $this->getDoctrine()->getRepository(Valoration::class)->findOneBy([
                             'id' => $id,
                             'from' => $identity->sub
                         ]);
 
-                        if ($comment && is_object($comment)){
-                            $comment->setBody($body);
+                        $data = [
+                            'status' => 'error',
+                            'code' => 400,
+                            'token' => $authCheck,
+                            'valoration' => $valoration,
+                            'message' => 'Valoracion existente, pero no modificada'
+                        ];
 
-                            $em->persist($comment);
+                        if ($valoration && is_object($valoration)){
+                            $valoration->setValue($value);
+
+                            $em->persist($valoration);
                             $em->flush();
 
                             $data = [
                                 'status' => 'success',
                                 'code' => 200,
-                                'message' => 'El comment se ha actualizado correctamente',
-                                'comment' => $comment
+                                'message' => 'La valoración se ha actualizado correctamente',
+                                'valoration' => $valoration
                             ];
                         }
                     }
@@ -138,9 +146,9 @@ class CommentController extends AbstractController
         return $this->resjson($data);
     }
 
-    //Retorna los comments del usuario al que se le hacen
+    //Retorna las valorations del usuario al que se le hacen
     //El usuario "from" es el autor de los comentarios
-    public function listComments(Request $request, JwtAuth $jwt_auth, PaginatorInterface $paginator, $id = null){
+    public function listValorations(Request $request, JwtAuth $jwt_auth, $id = null){
         // Recoger la cabecera de autenticación
         $token = $request->headers->get('Authorization');
 
@@ -162,26 +170,30 @@ class CommentController extends AbstractController
             $em = $this->getDoctrine()->getManager();
 
             // Hacer una consulta para paginar
-            $dql = "SELECT c FROM App\Entity\Comment c WHERE c.user = {$id} ORDER BY c.id DESC";
+            $dql = "SELECT v FROM App\Entity\Valoration v WHERE v.user = {$id} ORDER BY v.id DESC";
             $query = $em->createQuery($dql);
+            $valorationsFULL = $query->getResult();
+            //Solo valoraciones
+            $dql_values = $em->createQuery("SELECT v.value FROM App\Entity\Valoration v WHERE v.user = {$id} ORDER BY v.id DESC");
+            $valorationsONLY = $dql_values->getResult();
+            //Total valoraciones
+            $query_total = $em->createQuery("SELECT COUNT(v.value) FROM App\Entity\Valoration v WHERE v.user = {$id}");
+            $total = $query_total->getSingleScalarResult();
+            //Sumatorio valoraciones
+            $query_sum = $em->createQuery("SELECT SUM(v.value) FROM App\Entity\Valoration v WHERE v.user = {$id}");
+            $sum = $query_sum->getSingleScalarResult();
 
-            // Recoger el parametro page de la url
-            $page = $request->query->getInt('page', 1);
-            $items_per_page = 5;
-            
-            // Invocar paginación
-            $pagination = $paginator->paginate($query, $page, $items_per_page);
-            $total = $pagination->getTotalItemCount();
+            if ($total == 0){
+                $total = 1;
+            }
 
             // Preparar array de datos para devolver
             $data = array(
                 'status' => 'success',
                 'code' => 200,
-                'total_items_count' => $total,
-                'page_actual' => $page,
-                'itemps_per_page' => $items_per_page,
-                'total_page' => ceil($total / $items_per_page),
-                'comments' => $pagination,
+                'num_valorations' => $total,
+                'average_valorations' =>ceil($sum/$total), 
+                'valorations' => $valorationsFULL,
                 'user_demander' => $identity->sub,
                 'user_to' => $id
             );
@@ -190,49 +202,13 @@ class CommentController extends AbstractController
             $data = array(
                 'status' => 'error',
                 'code' => 404,
-                'message' => 'No se pueden listar los comentarios en este momento',
+                'message' => 'No se pueden listar las valoraciones en este momento',
                 'authcheck' => $authCheck
             );
         }
         return $this->resjson($data);
     }
 
-    //Elimina 1 comment
-    public function remove(Request $request, JwtAuth $jwt_auth, $id = null){
-
-        $token = $request->headers->get('Authorization');
-        $authCheck = $jwt_auth->checkToken($token);
-
-        // Salida por defecto
-        $data = [
-            'status' => 'error',
-            'code' => 404,
-            'message' => 'Comment no encontrado o sesion inválida',
-            'authcheck' => $authCheck
-        ];
-
-        if ($authCheck){
-            $identity = $jwt_auth->checkToken($token, true);
-            $doctrine = $this->getDoctrine();
-            $em = $doctrine->getManager();
-            $comment = $doctrine->getRepository(Comment::class)->findOneBy([
-                'id'=>$id
-            ]);
-
-            if ($comment && is_object($comment) && $identity->sub == $comment->getFrom()->getId()){
-                $em->remove($comment);
-                $em->flush();
-
-                $data = [
-                    'status' => 'success',
-                    'code' => 200,
-                    'comment' => $comment
-                ];
-            }
-        }
-
-        return $this->resjson($data);
-    }
 
 
 }

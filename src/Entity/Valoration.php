@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Valorations
  *
- * @ORM\Table(name="valorations", indexes={@ORM\Index(name="fk_valoration_user", columns={"user_id"})})
+ * @ORM\Table(name="valorations", indexes={@ORM\Index(name="fk_valorationto_user", columns={"user_id"}), @ORM\Index(name="fk_valorationfrom_user", columns={"from_id"})})
  * @ORM\Entity
  */
 class Valoration
@@ -24,21 +24,24 @@ class Valoration
     /**
      * @var int
      *
-     * @ORM\Column(name="from_id", type="integer", nullable=false)
-     */
-    private $fromId;
-
-    /**
-     * @var int
-     *
      * @ORM\Column(name="value", type="integer", nullable=false)
      */
     private $value;
 
+    /** 
+    * @var \User
+    *
+    * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="valorations_from")
+    * @ORM\JoinColumns({
+    *   @ORM\JoinColumn(name="from_id", referencedColumnName="id")
+    * })
+    */
+    private $from;
+
     /**
      * @var \User
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="valorations")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="valorations_to")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      * })
@@ -50,14 +53,14 @@ class Valoration
         return $this->id;
     }
 
-    public function getFromId(): ?int
+    public function getFrom(): ?User
     {
-        return $this->fromId;
+        return $this->from;
     }
 
-    public function setFromId(int $fromId): self
+    public function setFrom(User $from): self
     {
-        $this->fromId = $fromId;
+        $this->fromId = $from;
 
         return $this;
     }
