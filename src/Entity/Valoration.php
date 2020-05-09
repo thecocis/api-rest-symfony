@@ -60,7 +60,7 @@ class Valoration
 
     public function setFrom(User $from): self
     {
-        $this->fromId = $from;
+        $this->from = $from;
 
         return $this;
     }

@@ -87,9 +87,9 @@ class User implements \jsonSerializable
     private $createdAt = 'CURRENT_TIMESTAMP';
 
     /**
-     * @var int|null
+     * @var float|null
      *
-     * @ORM\Column(name="valoration", type="integer", nullable=true)
+     * @ORM\Column(name="valoration", type="float", nullable=true)
      */
     private $valoration;
 
@@ -268,12 +268,12 @@ class User implements \jsonSerializable
         return $this;
     }
 
-    public function getValoration(): ?int
+    public function getValoration(): ?float
     {
         return $this->valoration;
     }
 
-    public function setValoration(?int $valoration): self
+    public function setValoration(?float $valoration): self
     {
         $this->valoration = $valoration;
 
