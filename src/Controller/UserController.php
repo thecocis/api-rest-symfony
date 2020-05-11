@@ -113,7 +113,7 @@ class UserController extends AbstractController
                 $user->setValoration($valoration);
                 $user->setPrefix($prefix);
                 $user->setTelephone($telephone);
-                $user->setNumValoration('0');
+                $user->setNumValoration($num_valoration);
                 $user->setRole('ROLE_USER');
                 
 
@@ -435,13 +435,13 @@ class UserController extends AbstractController
             $identity = $jwt_auth->checkToken($token, true);
 
             // Conseguir todos los usuarios
-            $dql = $em->createQuery("SELECT u FROM App\Entity\User u ");
+            $dql = $em->createQuery("SELECT u FROM App\Entity\User u ORDER BY u.valoration DESC");
             $users = $dql->getResult();
 
             $data = [
                 'status' => 'success',
                 'code' => 200,
-                'event' => $users
+                'users' => $users
             ];
 
         }else { //Test para probar porque no funciona
