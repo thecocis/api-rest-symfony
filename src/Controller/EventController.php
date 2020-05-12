@@ -124,8 +124,8 @@ class EventController extends AbstractController
                     }else{            //EVENTO EXISTENTE, por lo tanto  lo modificamos
 
                         $event = $this->getDoctrine()->getRepository(Event::class)->findOneBy([
-                            'id' => $id,
-                            'user' => $identity->sub
+                            'id' => $id
+                            //'user' => $identity->sub
                         ]);
 
                         if ($event && is_object($event)){

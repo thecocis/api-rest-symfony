@@ -378,6 +378,7 @@ class User implements \jsonSerializable
             'image' => $this->image,
             'prefix' => $this->prefix,
             'telephone' => $this->telephone,
+            'role' => $this->role
         ];
     }
 
