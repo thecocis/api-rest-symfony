@@ -327,4 +327,85 @@ class EventController extends AbstractController
 
         return $this->resjson($data);
     }
+
+    public function search(Request $request, JwtAuth $jwt_auth, $search = null){
+        $token = $request->headers->get('Authorization');
+        $authCheck = $jwt_auth->checkToken($token);
+
+        // Salida por defecto
+        $data = [
+            'status' => 'error',
+            'code' => 404,
+            'message' => 'Evento no encontrado o sesion inválida',
+            'authcheck' => $authCheck
+        ];
+
+        if ($authCheck){
+            $identity = $jwt_auth->checkToken($token, true);
+            $em = $this->getDoctrine()->getManager();
+
+            //Filtro
+            $filter = $request->get('filter', null);
+            if (empty($filter)) {
+                $filter = null;
+            }elseif ($filter == 1) {
+                $filter = 'disponible';
+            }elseif ($filter == 2) {
+                $filter = 'lleno';
+            }else {
+                $filter = 'acabado';
+            }
+
+            //Orden
+            $order = $request->get('order', null);
+            if (empty($order) || $order == 2) {
+                $order = 'DESC';
+            }else {
+                $order = 'ASC';
+            }
+
+            //Búsqueda
+            if($search != null){
+                $dql = "SELECT e FROM App\Entity\Event e "
+                        ."WHERE e.user = {$identity->sub} AND "
+                        ."(e.title LIKE :search OR e.description LIKE :search)";
+            }else {
+                $dql = "SELECT e FROM App\Entity\Event e "
+                        ."WHERE e.user = {$identity->sub}";
+            }
+
+            //Set filter
+            if ($filter != null) {
+                $dql .= "AND e.status = :filter"; 
+            }
+
+            //Set order
+            $dql .= " ORDER BY e.id $order";
+
+            //Create query
+            $query = $em->createQuery($dql);
+
+            //Set parameter filter
+            if ($filter != null) {
+                $query->setParameter('filter', "$filter");
+            }
+
+            //Set parameter search
+            if (!empty($search)) {
+                $query->setParameter('search',"%$search%");
+            }
+
+            $events = $query->getResult();
+
+            $data = [
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Resultado de la búsqueda',
+                'events' => $events
+            ];
+        }
+
+        return $this->resjson($data);
+    }
+
 }

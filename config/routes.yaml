@@ -76,6 +76,12 @@ event_remove:
     controller: App\Controller\EventController::remove
     methods: [DELETE]
 
+event_search:
+    path: /event/search/{search}
+    controller: App\Controller\EventController::search
+    methods: [POST]
+
+
     # RUTAS PARA CONTROLADOR: COMMENT #
 
 comment:
