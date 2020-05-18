@@ -1,6 +1,15 @@
 CREATE DATABASE IF NOT EXISTS api_rest_symfony;
 USE api_rest_symfony;
 
+CREATE TABLE participants(
+id              int(255) auto_increment not null,
+user_id         int(255) not null,
+event_id        int(255) not null,
+CONSTRAINT pk_participants PRIMARY KEY(id),
+CONSTRAINT fk_participation_user FOREIGN KEY(user_id) REFERENCES users(id),
+CONSTRAINT fk_participation_event FOREIGN KEY(event_id) REFERENCES events(id)
+)ENGINE=InnoDb;
+
 CREATE TABLE comments(
 id              int(255) auto_increment not null,
 user_id         int(255) not null,
@@ -41,6 +50,8 @@ title           varchar(255) not null,
 description     text,
 price           int(11),
 date            date,
+maxCapacity     int(11),
+actualCapacity  int(11),
 CONSTRAINT pk_events PRIMARY KEY(id),
 CONSTRAINT fk_event_user FOREIGN KEY(user_id) REFERENCES users(id)
 )ENGINE=InnoDb;
@@ -53,3 +64,4 @@ value           int(255) not null,
 CONSTRAINT pk_valorations PRIMARY KEY(id),
 CONSTRAINT fk_valoration_user FOREIGN KEY(user_id) REFERENCES users(id)
 )ENGINE=InnoDb;
+

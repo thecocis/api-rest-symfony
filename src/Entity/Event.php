@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\Date;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Event
@@ -43,6 +45,20 @@ class Event
      * @ORM\Column(name="status", type="integer", length=11, nullable=true)
      */
     private $status;
+
+        /**
+     * @var int
+     *
+     * @ORM\Column(name="maxCapacity", type="integer", length=11, nullable=false)
+     */
+    private $maxCapacity;
+
+        /**
+     * @var int
+     *
+     * @ORM\Column(name="actualCapacity", type="integer", length=11, nullable=false)
+     */
+    private $actualCapacity;
 
     /**
      * @var string
@@ -96,6 +112,16 @@ class Event
      */
     private $user;
 
+    /**
+     * @ORM\OneToMany (targetEntity="App\Entity\Event", mappedBy="event")
+     */
+    private $participants;
+
+    public function __construct(){
+        $this->participants = new ArrayCollection();
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -134,6 +160,30 @@ class Event
     public function setStatus(?int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getMaxCapacity(): ?int
+    {
+        return $this->maxCapacity;
+    }
+
+    public function setMaxCapacity(?int $maxCapacity): self
+    {
+        $this->maxCapacity = $maxCapacity;
+
+        return $this;
+    }
+
+    public function getActualCapacity(): ?int
+    {
+        return $this->actualCapacity;
+    }
+
+    public function setActualCapacity(?int $actualCapacity): self
+    {
+        $this->actualCapacity = $actualCapacity;
 
         return $this;
     }
@@ -222,5 +272,11 @@ class Event
         return $this;
     }
 
+    /**
+     * @return Collection|Participant[]
+     */
+    public function getParticipants(): Collection{
+        return $this->participants;
+    }
 
 }

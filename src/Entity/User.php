@@ -147,12 +147,20 @@ class User implements \jsonSerializable
      */
     private $comments_from;
 
+    /**
+     * @ORM\OneToMany (targetEntity="App\Entity\Participant", mappedBy="user")
+     */
+    private $participants;
+
 
     public function __construct() {
         $this->events = new ArrayCollection();
         $this->valorations = new ArrayCollection();
         $this->comments_from = new ArrayCollection();
         $this->comments_to = new ArrayCollection();
+        $this->valorations_to = new ArrayCollection();
+        $this->valorations_from = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -363,6 +371,13 @@ class User implements \jsonSerializable
         return $this->comments_to;
     }
 
+    /**
+     * @return Collection|Participant[]
+     */
+    public function getParticipants(): Collection{
+        return $this->participants;
+    }
+
     public function jsonSerialize(): array{
 
         return [
@@ -422,6 +437,98 @@ class User implements \jsonSerializable
             // set the owning side to null (unless already changed)
             if ($valoration->getUser() === $this) {
                 $valoration->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addValorationsTo(Valoration $valorationsTo): self
+    {
+        if (!$this->valorations_to->contains($valorationsTo)) {
+            $this->valorations_to[] = $valorationsTo;
+            $valorationsTo->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeValorationsTo(Valoration $valorationsTo): self
+    {
+        if ($this->valorations_to->contains($valorationsTo)) {
+            $this->valorations_to->removeElement($valorationsTo);
+            // set the owning side to null (unless already changed)
+            if ($valorationsTo->getUser() === $this) {
+                $valorationsTo->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addValorationsFrom(Valoration $valorationsFrom): self
+    {
+        if (!$this->valorations_from->contains($valorationsFrom)) {
+            $this->valorations_from[] = $valorationsFrom;
+            $valorationsFrom->setFrom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeValorationsFrom(Valoration $valorationsFrom): self
+    {
+        if ($this->valorations_from->contains($valorationsFrom)) {
+            $this->valorations_from->removeElement($valorationsFrom);
+            // set the owning side to null (unless already changed)
+            if ($valorationsFrom->getFrom() === $this) {
+                $valorationsFrom->setFrom(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addCommentsTo(Comment $commentsTo): self
+    {
+        if (!$this->comments_to->contains($commentsTo)) {
+            $this->comments_to[] = $commentsTo;
+            $commentsTo->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentsTo(Comment $commentsTo): self
+    {
+        if ($this->comments_to->contains($commentsTo)) {
+            $this->comments_to->removeElement($commentsTo);
+            // set the owning side to null (unless already changed)
+            if ($commentsTo->getUser() === $this) {
+                $commentsTo->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addCommentsFrom(Comment $commentsFrom): self
+    {
+        if (!$this->comments_from->contains($commentsFrom)) {
+            $this->comments_from[] = $commentsFrom;
+            $commentsFrom->setFrom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentsFrom(Comment $commentsFrom): self
+    {
+        if ($this->comments_from->contains($commentsFrom)) {
+            $this->comments_from->removeElement($commentsFrom);
+            // set the owning side to null (unless already changed)
+            if ($commentsFrom->getFrom() === $this) {
+                $commentsFrom->setFrom(null);
             }
         }
 

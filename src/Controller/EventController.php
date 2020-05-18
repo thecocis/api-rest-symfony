@@ -84,6 +84,8 @@ class EventController extends AbstractController
                 $date = (!empty($params->date)) ? $params->date : null;
                 $latitude = (!empty($params->latitude)) ? $params->latitude : null;
                 $longitude = (!empty($params->longitude)) ? $params->longitude : null;
+                $maxCapacity = (!empty($params->maxCapacity)) ? $params->maxCapacity : null;
+                $actualCapacity = (!empty($params->actualCapacity)) ? $params->actualCapacity : null;
 
                 if(!empty($user_id) && !empty($title)){
                     // Guardar el nuevo evento en la BBDD
@@ -103,6 +105,8 @@ class EventController extends AbstractController
                         $event->setPrice($price);
                         $event->setLatitude($latitude);
                         $event->setLongitude($longitude);
+                        $event->setMaxCapacity($maxCapacity);
+                        $event->setActualCapacity($actualCapacity);
                     
 
                         $createdAt = new \Datetime('now');
@@ -136,6 +140,8 @@ class EventController extends AbstractController
                             $event->setPrice($price);
                             $event->setLatitude($latitude);
                             $event->setLongitude($longitude);
+                            $event->setMaxCapacity($maxCapacity);
+                            $event->setActualCapacity($actualCapacity);
                             
                             $realDate = new \Datetime($date);
                             $event->setDate($realDate);
@@ -344,7 +350,7 @@ class EventController extends AbstractController
             $identity = $jwt_auth->checkToken($token, true);
             $em = $this->getDoctrine()->getManager();
 
-            //Filtro
+            //Filtro    ATENCIÓN! EN LA BASE DE DATOS ESTA PUESTO COMO INT, NO COMO STRING!
             $filter = $request->get('filter', null);
             if (empty($filter)) {
                 $filter = null;
