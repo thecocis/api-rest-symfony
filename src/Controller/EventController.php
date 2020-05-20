@@ -106,7 +106,8 @@ class EventController extends AbstractController
                         $event->setLatitude($latitude);
                         $event->setLongitude($longitude);
                         $event->setMaxCapacity($maxCapacity);
-                        $event->setActualCapacity($actualCapacity);
+                        //ponemos maxCapacity ya que al inicio de un evento siempre estaran todas las plazas disponibles
+                        $event->setActualCapacity($maxCapacity); 
                     
 
                         $createdAt = new \Datetime('now');

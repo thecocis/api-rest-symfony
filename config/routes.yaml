@@ -1,6 +1,3 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
 
 # RUTAS PARA CONTROLADOR: USER #
 
@@ -127,4 +124,25 @@ valoration_edit:
 valoration_list:
     path: /valoration/list/{id}
     controller: App\Controller\ValorationController::listValorations
+    methods: [GET]
+
+    # RUTAS PARA CONTROLADOR: PARTICIPANT #
+
+participant:
+    path: /participant
+    controller: App\Controller\ParticipantController::index
+
+participant_new:
+    path: /participant/new
+    controller: App\Controller\ParticipantController::newParticipant
+    methods: [POST]
+
+participant_remove:
+    path: /participant/remove/{id}
+    controller: App\Controller\ParticipantController::removeParticipant
+    methods: [DELETE]
+
+participant_list:
+    path: /participant/list/{id}
+    controller: App\Controller\ParticipantController::listParticipants
     methods: [GET]

@@ -46,14 +46,14 @@ class Event
      */
     private $status;
 
-        /**
+    /**
      * @var int
      *
      * @ORM\Column(name="maxCapacity", type="integer", length=11, nullable=false)
      */
     private $maxCapacity;
 
-        /**
+    /**
      * @var int
      *
      * @ORM\Column(name="actualCapacity", type="integer", length=11, nullable=false)
@@ -112,14 +112,6 @@ class Event
      */
     private $user;
 
-    /**
-     * @ORM\OneToMany (targetEntity="App\Entity\Event", mappedBy="event")
-     */
-    private $participants;
-
-    public function __construct(){
-        $this->participants = new ArrayCollection();
-    }
 
 
     public function getId(): ?int
@@ -270,13 +262,6 @@ class Event
         $this->user = $user;
 
         return $this;
-    }
-
-    /**
-     * @return Collection|Participant[]
-     */
-    public function getParticipants(): Collection{
-        return $this->participants;
     }
 
 }

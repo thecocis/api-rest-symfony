@@ -22,14 +22,11 @@ class Participant
     private $id;
 
     /**
-     * @var \Event
+     * @var int
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="participants")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="event_id", referencedColumnName="id")
-     * })
+     * @ORM\Column(name="event_id", type="integer", length=11, nullable=false)
      */
-    private $event;
+    private $event_id;
 
     /**
      * @var \User
@@ -46,14 +43,14 @@ class Participant
         return $this->id;
     }
 
-    public function getEvent(): ?Event
+    public function getEvent(): ?int
     {
-        return $this->event;
+        return $this->event_id;
     }
 
-    public function setEvent(?Event $event): self
+    public function setEvent(?int $event_id): self
     {
-        $this->event = $event;
+        $this->event_id = $event_id;
 
         return $this;
     }

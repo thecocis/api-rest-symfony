@@ -223,7 +223,7 @@ class ValorationController extends AbstractController
 
             $em = $this->getDoctrine()->getManager();
 
-            // Hacer una consulta para paginar
+            // Hacer una consulta 
             $dql = "SELECT v FROM App\Entity\Valoration v WHERE v.user = {$id} ORDER BY v.id DESC";
             $query = $em->createQuery($dql);
             $valorationsFULL = $query->getResult();
